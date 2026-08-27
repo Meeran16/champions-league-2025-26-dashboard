@@ -6,6 +6,16 @@ project.
 
 The analytics repository remains the data-engineering and SQL layer. This repository focuses on interactive exploration, application design, and a grounded AI-assisted football analysis layer.
 
+## Dashboard Preview
+
+### Tournament Overview
+
+![Tournament Overview](docs/screenshots/tournament_overview.png)
+
+### AI Analyst
+
+![AI Analyst](docs/screenshots/ai_analyst.png)
+
 ## Quick start — open the dashboard
 
 If the project is already set up, opening the dashboard is only two commands in PowerShell:
