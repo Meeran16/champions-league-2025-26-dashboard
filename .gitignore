@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.streamlit/secrets.toml
+data/derived/*.csv
+!data/derived/README.md
+*.db
+*.sqlite
+*.sqlite3
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
