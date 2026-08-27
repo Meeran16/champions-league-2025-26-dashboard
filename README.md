@@ -1,11 +1,47 @@
-\
 # UEFA Champions League 2025/26 Dashboard
 
 Interactive Streamlit + Plotly application built on the separate
 [`champions-league-2025-26-analytics`](https://github.com/Meeran16/champions-league-2025-26-analytics)
 project.
 
-The analytics repository remains the data-engineering and SQL layer. This repository focuses on interactive exploration and application design.
+The analytics repository remains the data-engineering and SQL layer. This repository focuses on interactive exploration, application design, and a grounded AI-assisted football analysis layer.
+
+## Quick start — open the dashboard
+
+If the project is already set up, opening the dashboard is only two commands in PowerShell:
+
+```powershell
+cd D:\Github\champions-league-2025-26-dashboard
+streamlit run app.py
+```
+
+Then open this address in the browser:
+
+```text
+http://localhost:8501
+```
+
+To stop the dashboard, return to PowerShell and press:
+
+```text
+Ctrl+C
+```
+
+If `streamlit` is not recognized, use:
+
+```powershell
+python -m streamlit run app.py
+```
+
+If the dashboard says that generated data is missing, run:
+
+```powershell
+python scripts/export_dashboard_data.py
+python scripts/validate_dashboard_data.py
+streamlit run app.py
+```
+
+That is normally all that is needed to reopen the project later.
 
 ## Dashboard pages
 
@@ -14,8 +50,7 @@ The analytics repository remains the data-engineering and SQL layer. This reposi
 3. **Player Rankings** — Top-5 LPI rankings by position with source-signal breakdowns.
 4. **Player Comparison** — same-position LPI comparison.
 5. **Match Explorer** — tournament filters and match-level inspection.
-
-The AI-assisted football analysis layer is intentionally added only after this base dashboard is validated.
+6. **AI Analyst** — evidence-first natural-language football questions routed through approved analytical functions.
 
 ## Architecture
 
@@ -29,11 +64,17 @@ scripts/export_dashboard_data.py
         ▼
 data/derived/*.csv
         │
-        ▼
-Streamlit + Plotly dashboard
+        ├──────────────► Streamlit + Plotly dashboard
+        │
+        └──────────────► Grounded AI evidence engine
+                              │
+                              ▼
+                     future LLM explanation layer
 ```
 
-## Local setup
+The AI evidence engine does not execute arbitrary SQL. Questions are routed to approved analytical functions that return structured evidence, scope information, caveats, and relevant visualizations. Unsupported questions return safely without inventing statistics.
+
+## First-time local setup
 
 Recommended folder layout:
 
@@ -48,6 +89,7 @@ D:\Github\
 From the analytics repository:
 
 ```powershell
+cd D:\Github\champions-league-2025-26-analytics
 python src/run_pipeline.py
 python src/run_player_upgrade.py
 python src/validate_data.py
@@ -56,7 +98,10 @@ python src/validate_player_data.py
 
 ### 2. Install dashboard dependencies
 
+From the dashboard repository:
+
 ```powershell
+cd D:\Github\champions-league-2025-26-dashboard
 pip install -r requirements.txt
 ```
 
@@ -92,13 +137,21 @@ Expected core checks:
 - 36 league-table rows
 - Forward, Midfielder, Defender and Goalkeeper LPI groups
 
-### 5. Start Streamlit
+### 5. Test the AI grounding layer
+
+```powershell
+python scripts/test_ai_backend.py
+```
+
+The current grounding test covers tournament, team, match, possession and player questions without using an LLM or arbitrary SQL.
+
+### 6. Start the dashboard
 
 ```powershell
 streamlit run app.py
 ```
 
-Streamlit normally opens:
+Open:
 
 ```text
 http://localhost:8501
@@ -119,26 +172,28 @@ The LPI is a project-defined analytical index, not an official UEFA award and no
 
 It ranks players represented in the preserved source-leaderboard candidate pool. Different positions use different source signals and weights, so Player Comparison is restricted to the same position group.
 
+## AI Analyst design
+
+The current AI layer follows an evidence-first architecture:
+
+```text
+Natural-language question
+        ↓
+Entity resolution + intent routing
+        ↓
+Approved analytics function
+        ↓
+Validated dashboard data
+        ↓
+Structured evidence
+        ↓
+Answer + evidence + chart + scope + caveats
+```
+
+The next stage will add a language-model explanation layer on top of this structured evidence. Numerical claims will remain grounded in the analytical functions rather than being calculated or invented by the LLM.
+
 ## Data redistribution
 
 Generated files under `data/derived/` are ignored by Git by default.
 
 Before a public deployment, review the redistribution/licensing terms of the underlying detailed match-statistics sources and decide which generated datasets can be packaged with the deployed application.
-
-## Planned AI layer
-
-The next stage will use:
-
-```text
-Natural-language question
-        ↓
-Approved analytics function
-        ↓
-Validated dashboard dataset
-        ↓
-Structured evidence
-        ↓
-LLM explanation
-```
-
-The language model will explain validated results rather than invent or calculate tournament statistics itself.
